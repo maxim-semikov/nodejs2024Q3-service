@@ -14,7 +14,7 @@ export class CreateAlbumDto {
   name: string;
 
   @IsInt()
-  @Min(1900)
+  @Min(1000)
   @Max(new Date().getFullYear())
   year: number;
 
