@@ -7,17 +7,18 @@ import { User } from '../../interface/interface';
 import { createUUID } from '../../helpers/uuidHelpers';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { DatabaseService } from '../../database/database.service';
 
 @Injectable()
 export class UsersService {
-  private readonly users: User[] = [];
+  constructor(private databaseService: DatabaseService) {}
 
   findAll(): User[] {
-    return this.users;
+    return this.databaseService.user.getAllUsers();
   }
 
-  findOne(id: string): User {
-    const user = this.users.find((user) => user.id === id);
+  getUserById(id: string): User {
+    const user = this.databaseService.user.getUser(id);
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
@@ -30,29 +31,31 @@ export class UsersService {
       updatedAt: Date.now(),
       version: 1,
     };
-    this.users.push(newUser);
+    this.databaseService.user.createUser(newUser);
 
     return newUser;
   }
 
   updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
-    const user = this.findOne(id);
+    const user = this.getUserById(id);
+
     if (user.password !== updatePasswordDto.oldPassword) {
       throw new ForbiddenException('Old password is incorrect');
     }
 
-    user.password = updatePasswordDto.newPassword;
-    user.updatedAt = Date.now();
-    user.version++;
+    const newUserData = {
+      ...user,
+      password: updatePasswordDto.newPassword,
+      updatedAt: Date.now(),
+      version: user.version + 1,
+    };
+    this.databaseService.user.updateUser(id, newUserData);
 
-    return user;
+    return newUserData;
   }
 
   delete(id: string): void {
-    const index = this.users.findIndex((user) => user.id === id);
-    if (index === -1) {
-      throw new NotFoundException('User not found');
-    }
-    this.users.splice(index, 1);
+    this.getUserById(id);
+    this.databaseService.user.deleteUser(id);
   }
 }

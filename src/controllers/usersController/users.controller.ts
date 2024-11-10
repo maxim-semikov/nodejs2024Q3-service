@@ -11,7 +11,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { User } from '../../interface/interface';
-import { ValidateUserIdPipe } from '../../pipes/validate-user-id.pipe';
+import { ValidateUuidPipe } from '../../pipes/validate-uuid-pipe.service';
 import { ExcludeUserPasswordInterceptor } from '../../interceptors/exclude-user-password.interceptor';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -28,10 +28,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  async getUserById(
-    @Param('id', ValidateUserIdPipe) id: string,
-  ): Promise<User> {
-    return this.usersService.findOne(id);
+  async getUserById(@Param('id', ValidateUuidPipe) id: string): Promise<User> {
+    return this.usersService.getUserById(id);
   }
 
   @Post()
@@ -42,7 +40,7 @@ export class UsersController {
 
   @Put(':id')
   async updateUser(
-    @Param('id', ValidateUserIdPipe) id: string,
+    @Param('id', ValidateUuidPipe) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ): Promise<User> {
     return this.usersService.updatePassword(id, updatePasswordDto);
@@ -50,7 +48,7 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteUser(@Param('id', ValidateUserIdPipe) id: string): Promise<void> {
+  async deleteUser(@Param('id', ValidateUuidPipe) id: string): Promise<void> {
     return this.usersService.delete(id);
   }
 }

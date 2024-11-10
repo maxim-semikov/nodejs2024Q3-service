@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { ValidateUserIdPipe } from '../../pipes/validate-user-id.pipe';
+import { ValidateUuidPipe } from '../../pipes/validate-uuid-pipe.service';
+import { DatabaseService } from '../../database/database.service';
 
 @Module({
   controllers: [UsersController],
-  providers: [UsersService, ValidateUserIdPipe],
+  providers: [UsersService, ValidateUuidPipe, DatabaseService],
 })
 export class UsersModule {}
