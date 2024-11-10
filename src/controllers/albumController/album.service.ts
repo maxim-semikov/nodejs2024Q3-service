@@ -40,6 +40,6 @@ export class AlbumService {
     this.databaseService.album.delete(id);
 
     this.databaseService.track.clearAlbumId(id);
-    this.databaseService.favorites.removeAlbum(id);
+    this.databaseService.favorites.albums.delete(id);
   }
 }

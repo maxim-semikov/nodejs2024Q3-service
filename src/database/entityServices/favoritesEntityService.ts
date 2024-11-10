@@ -1,57 +1,22 @@
 import { Favorites } from '../../interface/interface';
+import { FavoriteSet } from './favoriteSet';
 
 export class FavoritesEntityService {
-  private artists: Set<string>;
-  private albums: Set<string>;
-  private tracks: Set<string>;
+  artists: FavoriteSet;
+  albums: FavoriteSet;
+  tracks: FavoriteSet;
 
   constructor() {
-    this.artists = new Set();
-    this.albums = new Set();
-    this.tracks = new Set();
+    this.artists = new FavoriteSet();
+    this.albums = new FavoriteSet();
+    this.tracks = new FavoriteSet();
   }
 
   getAll(): Favorites {
     return {
-      artists: Array.from(this.artists.values()) || [],
-      albums: Array.from(this.albums.values()) || [],
-      tracks: Array.from(this.tracks.values()) || [],
+      artists: this.artists.getAll(),
+      albums: this.albums.getAll(),
+      tracks: this.tracks.getAll(),
     };
-  }
-
-  addTrack(id: string) {
-    this.tracks.add(id);
-  }
-
-  removeTrack(id: string) {
-    this.tracks.delete(id);
-  }
-
-  hasTrackId(id: string) {
-    return this.tracks.has(id);
-  }
-
-  addAlbum(id: string) {
-    this.albums.add(id);
-  }
-
-  removeAlbum(id: string) {
-    this.albums.delete(id);
-  }
-
-  hasAlbumId(id: string) {
-    return this.albums.has(id);
-  }
-
-  addArtist(id: string) {
-    this.artists.add(id);
-  }
-
-  removeArtist(id: string) {
-    this.artists.delete(id);
-  }
-
-  hasArtistId(id: string) {
-    return this.artists.has(id);
   }
 }

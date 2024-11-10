@@ -41,6 +41,6 @@ export class ArtistService {
 
     this.databaseService.track.clearArtistId(id);
     this.databaseService.album.clearArtistId(id);
-    this.databaseService.favorites.removeArtist(id);
+    this.databaseService.favorites.artists.delete(id);
   }
 }

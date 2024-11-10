@@ -39,6 +39,6 @@ export class TrackService {
     this.findOne(id);
 
     this.databaseService.track.delete(id);
-    this.databaseService.favorites.removeTrack(id);
+    this.databaseService.favorites.tracks.delete(id);
   }
 }

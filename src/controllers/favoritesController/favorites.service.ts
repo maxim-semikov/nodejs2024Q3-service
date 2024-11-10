@@ -27,12 +27,12 @@ export class FavoritesService {
   }
 
   addTrack(id: string) {
-    this.databaseService.favorites.addTrack(id);
+    this.databaseService.favorites.tracks.add(id);
     return this.databaseService.track.get(id);
   }
 
   removeTrack(id: string) {
-    this.databaseService.favorites.removeTrack(id);
+    this.databaseService.favorites.tracks.delete(id);
   }
 
   checkTrackIdExists(trackId: string) {
@@ -40,16 +40,16 @@ export class FavoritesService {
   }
 
   isTrackIdInFavorites(trackId: string) {
-    return this.databaseService.favorites.hasTrackId(trackId);
+    return this.databaseService.favorites.tracks.has(trackId);
   }
 
   addAlbum(id: string) {
-    this.databaseService.favorites.addAlbum(id);
+    this.databaseService.favorites.albums.add(id);
     return this.databaseService.album.get(id);
   }
 
   removeAlbum(id: string) {
-    this.databaseService.favorites.removeAlbum(id);
+    this.databaseService.favorites.albums.delete(id);
   }
 
   checkAlbumIdExists(id: string) {
@@ -57,16 +57,16 @@ export class FavoritesService {
   }
 
   isAlbumIdInFavorites(id: string) {
-    return this.databaseService.favorites.hasAlbumId(id);
+    return this.databaseService.favorites.albums.has(id);
   }
 
   addArtist(id: string) {
-    this.databaseService.favorites.addArtist(id);
+    this.databaseService.favorites.artists.add(id);
     return this.databaseService.artist.get(id);
   }
 
   removeArtist(id: string) {
-    this.databaseService.favorites.removeArtist(id);
+    this.databaseService.favorites.artists.delete(id);
   }
 
   checkArtistIdExists(id: string) {
@@ -74,6 +74,6 @@ export class FavoritesService {
   }
 
   isArtistIdInFavorites(id: string) {
-    return this.databaseService.favorites.hasArtistId(id);
+    return this.databaseService.favorites.artists.has(id);
   }
 }
