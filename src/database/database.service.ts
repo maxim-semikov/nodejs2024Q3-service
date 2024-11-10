@@ -6,14 +6,11 @@ import { TrackEntityService } from './entityServices/trackEntityService';
 
 @Injectable()
 export class DatabaseService {
-  public user: UserEntityService = UserEntityService.createUserEntityService();
+  public user = new UserEntityService();
 
-  public artist: ArtistEntityService =
-    ArtistEntityService.createArtistEntityService();
+  public artist = new ArtistEntityService();
 
-  public album: AlbumEntityService =
-    AlbumEntityService.createAlbumEntityService();
+  public album = new AlbumEntityService();
 
-  public track: TrackEntityService =
-    TrackEntityService.createTrackEntityService();
+  public track = new TrackEntityService();
 }
