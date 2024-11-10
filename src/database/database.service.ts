@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserEntityService } from './entityServices/userEntityService';
 import { ArtistEntityService } from './entityServices/artistEntityService';
 import { AlbumEntityService } from './entityServices/albumEntityService';
+import { TrackEntityService } from './entityServices/trackEntityService';
 
 @Injectable()
 export class DatabaseService {
@@ -12,4 +13,7 @@ export class DatabaseService {
 
   public album: AlbumEntityService =
     AlbumEntityService.createAlbumEntityService();
+
+  public track: TrackEntityService =
+    TrackEntityService.createTrackEntityService();
 }
