@@ -38,5 +38,9 @@ export class ArtistService {
   remove(id: string) {
     this.findOne(id);
     this.databaseService.artist.delete(id);
+
+    this.databaseService.track.clearArtistId(id);
+    this.databaseService.album.clearArtistId(id);
+    this.databaseService.favorites.removeArtist(id);
   }
 }
