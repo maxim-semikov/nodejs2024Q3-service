@@ -17,6 +17,10 @@ export class EntityService<T extends { id: string }> {
     return this.entity.get(id);
   }
 
+  has(id: string): boolean {
+    return this.entity.has(id);
+  }
+
   update(id: string, value: T) {
     this.entity.set(id, value);
   }

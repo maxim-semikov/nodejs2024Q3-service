@@ -3,6 +3,7 @@ import { UserEntityService } from './entityServices/userEntityService';
 import { ArtistEntityService } from './entityServices/artistEntityService';
 import { AlbumEntityService } from './entityServices/albumEntityService';
 import { TrackEntityService } from './entityServices/trackEntityService';
+import { FavoritesEntityService } from './entityServices/favoritesEntityService';
 
 @Injectable()
 export class DatabaseService {
@@ -13,4 +14,6 @@ export class DatabaseService {
   public album = new AlbumEntityService();
 
   public track = new TrackEntityService();
+
+  public favorites = new FavoritesEntityService();
 }
