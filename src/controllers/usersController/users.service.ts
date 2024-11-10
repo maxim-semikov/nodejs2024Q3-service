@@ -14,11 +14,11 @@ export class UsersService {
   constructor(private databaseService: DatabaseService) {}
 
   findAll(): User[] {
-    return this.databaseService.user.getAllUsers();
+    return this.databaseService.user.getAll();
   }
 
   getUserById(id: string): User {
-    const user = this.databaseService.user.getUser(id);
+    const user = this.databaseService.user.get(id);
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
@@ -31,7 +31,7 @@ export class UsersService {
       updatedAt: Date.now(),
       version: 1,
     };
-    this.databaseService.user.createUser(newUser);
+    this.databaseService.user.create(newUser);
 
     return newUser;
   }
@@ -49,13 +49,13 @@ export class UsersService {
       updatedAt: Date.now(),
       version: user.version + 1,
     };
-    this.databaseService.user.updateUser(id, newUserData);
+    this.databaseService.user.update(id, newUserData);
 
     return newUserData;
   }
 
   delete(id: string): void {
     this.getUserById(id);
-    this.databaseService.user.deleteUser(id);
+    this.databaseService.user.delete(id);
   }
 }

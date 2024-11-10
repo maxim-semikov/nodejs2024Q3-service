@@ -13,6 +13,7 @@ import { DatabaseModule } from './database/database.module';
     }),
     DatabaseModule,
     UsersModule,
+    ArtistModule,
   ],
   controllers: [AppController],
   providers: [AppService],

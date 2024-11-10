@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { UserService } from './entityServices/UserService';
+import { UserEntityService } from './entityServices/userEntityService';
+import { ArtistEntityService } from './entityServices/artistEntityService';
 
 @Injectable()
 export class DatabaseService {
-  public user: UserService = UserService.createUserService();
+  public user: UserEntityService = UserEntityService.createUserEntityService();
+  public artist: ArtistEntityService =
+    ArtistEntityService.createArtistEntityService();
 }
