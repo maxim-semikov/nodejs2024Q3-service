@@ -8,6 +8,7 @@ import { DatabaseModule } from './database/database.module';
 import { AlbumModule } from './controllers/albumController/album.module';
 import { TrackModule } from './controllers/trackController/track.module';
 import { FavoritesModule } from './controllers/favoritesController/favorites.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { FavoritesModule } from './controllers/favoritesController/favorites.mod
     AlbumModule,
     TrackModule,
     FavoritesModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService, DatabaseModule],
