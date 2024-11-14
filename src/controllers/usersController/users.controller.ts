@@ -10,7 +10,7 @@ import {
   Put,
   UseInterceptors,
 } from '@nestjs/common';
-import { User } from '../../interface/interface';
+import { User } from '@prisma/client';
 import { ValidateUuidPipe } from '../../pipes/validate-uuid-pipe.service';
 import { ExcludeUserPasswordInterceptor } from '../../interceptors/exclude-user-password.interceptor';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -28,7 +28,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  async getUserById(@Param('id', ValidateUuidPipe) id: string): Promise<User> {
+  async getUserById(@Param('id', ValidateUuidPipe) id: string) {
     return this.usersService.getUserById(id);
   }
 
@@ -42,7 +42,7 @@ export class UsersController {
   async updateUser(
     @Param('id', ValidateUuidPipe) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
-  ): Promise<User> {
+  ) {
     return this.usersService.updatePassword(id, updatePasswordDto);
   }
 

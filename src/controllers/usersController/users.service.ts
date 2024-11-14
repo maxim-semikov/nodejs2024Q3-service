@@ -3,59 +3,46 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from '../../interface/interface';
-import { createUUID } from '../../helpers/uuidHelpers';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { DatabaseService } from '../../database/database.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(private prisma: PrismaService) {}
 
-  findAll(): User[] {
-    return this.databaseService.user.getAll();
+  async findAll() {
+    return this.prisma.user.findMany();
   }
 
-  getUserById(id: string): User {
-    const user = this.databaseService.user.get(id);
+  async getUserById(id: string) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
 
-  create(createUserDto: CreateUserDto): User {
-    const newUser: User = {
-      id: createUUID(),
-      ...createUserDto,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      version: 1,
-    };
-    this.databaseService.user.create(newUser);
-
-    return newUser;
+  async create(createUserDto: CreateUserDto) {
+    return this.prisma.user.create({ data: createUserDto });
   }
 
-  updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
-    const user = this.getUserById(id);
+  async updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
+    const user = await this.getUserById(id);
 
     if (user.password !== updatePasswordDto.oldPassword) {
       throw new ForbiddenException('Old password is incorrect');
     }
 
-    const newUserData = {
-      ...user,
-      password: updatePasswordDto.newPassword,
-      updatedAt: Date.now(),
-      version: user.version + 1,
-    };
-    this.databaseService.user.update(id, newUserData);
-
-    return newUserData;
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        password: updatePasswordDto.newPassword,
+        version: { increment: 1 },
+      },
+    });
   }
 
-  delete(id: string): void {
-    this.getUserById(id);
-    this.databaseService.user.delete(id);
+  async delete(id: string) {
+    await this.getUserById(id);
+    await this.prisma.user.delete({ where: { id } });
   }
 }
