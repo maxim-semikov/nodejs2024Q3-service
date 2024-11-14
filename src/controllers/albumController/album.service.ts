@@ -1,45 +1,38 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { DatabaseService } from '../../database/database.service';
-import { createUUID } from '../../helpers/uuidHelpers';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class AlbumService {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return this.databaseService.album.getAll();
+  async findAll() {
+    return this.prisma.album.findMany();
   }
 
-  create(createAlbumDto: CreateAlbumDto) {
-    const newAlbum = {
-      id: createUUID(),
-      ...createAlbumDto,
-    };
-    this.databaseService.album.create(newAlbum);
-    return newAlbum;
+  async create(createAlbumDto: CreateAlbumDto) {
+    return this.prisma.album.create({ data: createAlbumDto });
   }
 
-  findOne(id: string) {
-    const album = this.databaseService.album.get(id);
+  async findOne(id: string) {
+    const album = await this.prisma.album.findUnique({ where: { id: id } });
     if (!album) throw new NotFoundException('Album not found');
     return album;
   }
 
-  update(id: string, updateArtistDto: UpdateAlbumDto) {
-    const album = this.findOne(id);
-    const newAlbum = { ...album, ...updateArtistDto };
+  async update(id: string, updateArtistDto: UpdateAlbumDto) {
+    const album = await this.findOne(id);
+    const data = { ...album, ...updateArtistDto };
 
-    this.databaseService.album.update(id, newAlbum);
-    return newAlbum;
+    return this.prisma.album.update({
+      where: { id },
+      data,
+    });
   }
 
-  remove(id: string) {
-    this.findOne(id);
-    this.databaseService.album.delete(id);
-
-    this.databaseService.track.clearAlbumId(id);
-    this.databaseService.favorites.albums.delete(id);
+  async remove(id: string) {
+    await this.findOne(id);
+    await this.prisma.album.delete({ where: { id: id } });
   }
 }
