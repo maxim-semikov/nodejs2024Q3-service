@@ -4,7 +4,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ArtistModule } from './controllers/artistController/artist.module';
 import { UsersModule } from './controllers/usersController/users.module';
-import { DatabaseModule } from './database/database.module';
 import { AlbumModule } from './controllers/albumController/album.module';
 import { TrackModule } from './controllers/trackController/track.module';
 import { FavoritesModule } from './controllers/favoritesController/favorites.module';
@@ -15,7 +14,6 @@ import { PrismaModule } from './prisma/prisma.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    DatabaseModule,
     UsersModule,
     ArtistModule,
     AlbumModule,
@@ -24,6 +22,6 @@ import { PrismaModule } from './prisma/prisma.module';
     PrismaModule,
   ],
   controllers: [AppController],
-  providers: [AppService, DatabaseModule],
+  providers: [AppService],
 })
 export class AppModule {}
