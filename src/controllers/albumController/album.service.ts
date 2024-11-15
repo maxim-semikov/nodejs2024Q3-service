@@ -36,9 +36,9 @@ export class AlbumService {
   async remove(id: string) {
     await this.findOne(id);
 
-    await this.prismaService.album.delete({ where: { id } });
     await this.prismaService.favoriteAlbum.deleteMany({
       where: { albumId: id },
     });
+    await this.prismaService.album.delete({ where: { id } });
   }
 }

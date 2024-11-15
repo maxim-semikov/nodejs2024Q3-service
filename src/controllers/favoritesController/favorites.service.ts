@@ -40,7 +40,7 @@ export class FavoritesService {
   }
 
   async removeTrack(trackId: string) {
-    this.prismaService.favoriteTrack.delete({ where: { trackId } });
+    await this.prismaService.favoriteTrack.delete({ where: { trackId } });
   }
 
   async checkTrackIdExists(id: string) {
@@ -62,7 +62,7 @@ export class FavoritesService {
   }
 
   async removeAlbum(albumId: string) {
-    this.prismaService.favoriteAlbum.delete({ where: { albumId } });
+    await this.prismaService.favoriteAlbum.delete({ where: { albumId } });
   }
 
   async checkAlbumIdExists(id: string) {
@@ -82,7 +82,7 @@ export class FavoritesService {
   }
 
   async removeArtist(artistId: string) {
-    this.prismaService.favoriteArtist.delete({ where: { artistId } });
+    await this.prismaService.favoriteArtist.delete({ where: { artistId } });
   }
 
   async checkArtistIdExists(id: string) {
