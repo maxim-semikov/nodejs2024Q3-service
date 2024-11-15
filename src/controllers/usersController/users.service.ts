@@ -6,6 +6,7 @@ import {
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../../prisma/prisma.service';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -22,7 +23,10 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    return this.prisma.user.create({ data: createUserDto });
+    const user = await this.prisma.user.create({
+      data: createUserDto,
+    });
+    return new UserEntity(user);
   }
 
   async updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
@@ -32,13 +36,15 @@ export class UsersService {
       throw new ForbiddenException('Old password is incorrect');
     }
 
-    return this.prisma.user.update({
+    const updatedUser = await this.prisma.user.update({
       where: { id },
       data: {
         password: updatePasswordDto.newPassword,
         version: { increment: 1 },
       },
     });
+
+    return new UserEntity(updatedUser);
   }
 
   async delete(id: string) {
