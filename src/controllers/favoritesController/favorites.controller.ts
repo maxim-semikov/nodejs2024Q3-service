@@ -9,8 +9,11 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { FavoritesService } from './favorites.service';
 import { ValidateUuidPipe } from '../../pipes/validate-uuid-pipe.service';
+import { FavoriteTypeValidatorPipe } from '../../pipes/favorite-type-validator.pipe';
+import { startCase } from '../../helpers/startCase';
+import { FavoriteTypes } from '../../interface/interface';
+import { FavoritesService } from './favorites.service';
 
 @Controller('favs')
 export class FavoritesController {
@@ -21,77 +24,41 @@ export class FavoritesController {
     return this.favoritesService.findAll();
   }
 
-  @Post('track/:id')
+  @Post(':favoriteType/:id')
   @HttpCode(HttpStatus.CREATED)
-  async addTrack(@Param('id', ValidateUuidPipe) id: string) {
-    const isTrackIdExist = await this.favoritesService.checkTrackIdExists(id);
-    if (!isTrackIdExist) {
+  async addToFavorite(
+    @Param('id', ValidateUuidPipe) id: string,
+    @Param('favoriteType', FavoriteTypeValidatorPipe)
+    favoriteType: FavoriteTypes,
+  ) {
+    const isEntityExist = await this.favoritesService.checkEntityExists(
+      id,
+      favoriteType,
+    );
+    if (!isEntityExist) {
       throw new HttpException(
-        'Track not found',
+        `${startCase(favoriteType)} not found`,
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
 
-    return this.favoritesService.addTrack(id);
+    return this.favoritesService.addToFavorite(id, favoriteType);
   }
 
-  @Delete('track/:id')
+  @Delete(':favoriteType/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeTrack(@Param('id', ValidateUuidPipe) id: string) {
-    const isTrackIdInFavorites = this.favoritesService.isTrackIdInFavorites(id);
-    if (!isTrackIdInFavorites) {
-      throw new NotFoundException('Track is not favorite');
+  async removeFromFavorite(
+    @Param('id', ValidateUuidPipe) id: string,
+    @Param('favoriteType', FavoriteTypeValidatorPipe)
+    favoriteType: FavoriteTypes,
+  ) {
+    const isEntityInFavorite = await this.favoritesService.isEntityInFavorites(
+      id,
+      favoriteType,
+    );
+    if (!isEntityInFavorite) {
+      throw new NotFoundException(`${startCase(favoriteType)} is not favorite`);
     }
-    return this.favoritesService.removeTrack(id);
-  }
-
-  @Post('album/:id')
-  @HttpCode(HttpStatus.CREATED)
-  async addAlbum(@Param('id', ValidateUuidPipe) id: string) {
-    const isAlbumExist = await this.favoritesService.checkAlbumIdExists(id);
-    if (!isAlbumExist) {
-      throw new HttpException(
-        'Album not found',
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
-    return this.favoritesService.addAlbum(id);
-  }
-
-  @Delete('album/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async removeAlbum(@Param('id', ValidateUuidPipe) id: string) {
-    const isAlbumIdInFavorite =
-      await this.favoritesService.isAlbumIdInFavorites(id);
-    if (!isAlbumIdInFavorite) {
-      throw new NotFoundException('Album is not favorite');
-    }
-    return this.favoritesService.removeAlbum(id);
-  }
-
-  @Post('artist/:id')
-  @HttpCode(HttpStatus.CREATED)
-  async addArtist(@Param('id', ValidateUuidPipe) id: string) {
-    const isArtistExist = await this.favoritesService.checkArtistIdExists(id);
-    if (!isArtistExist) {
-      throw new HttpException(
-        'Artist not found',
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
-    return this.favoritesService.addArtist(id);
-  }
-
-  @Delete('artist/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async removeArtist(@Param('id', ValidateUuidPipe) id: string) {
-    const isArtistIdInFavorite =
-      await this.favoritesService.isArtistIdInFavorites(id);
-    if (!isArtistIdInFavorite) {
-      throw new NotFoundException('Artist is not favorite');
-    }
-    return this.favoritesService.removeArtist(id);
+    return this.favoritesService.removeFromFavorite(id, favoriteType);
   }
 }
