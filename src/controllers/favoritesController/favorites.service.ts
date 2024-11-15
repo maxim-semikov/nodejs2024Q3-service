@@ -1,23 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '../../database/database.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class FavoritesService {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(private prismaService: PrismaService) {}
 
-  findAll() {
-    const favorites = this.databaseService.favorites.getAll();
-    const artists = favorites.artists.map((artistId) =>
-      this.databaseService.artist.get(artistId),
-    );
+  async findAll() {
+    const tracks = (
+      await this.prismaService.favoriteTrack.findMany({
+        include: { track: true },
+      })
+    ).map((v) => v?.track);
 
-    const albums = favorites.albums.map((albumId) =>
-      this.databaseService.album.get(albumId),
-    );
+    const artists = (
+      await this.prismaService.favoriteArtist.findMany({
+        include: { artist: true },
+      })
+    ).map((v) => v?.artist);
 
-    const tracks = favorites.tracks.map((trackId) =>
-      this.databaseService.track.get(trackId),
-    );
+    const albums = (
+      await this.prismaService.favoriteAlbum.findMany({
+        include: { album: true },
+      })
+    ).map((v) => v?.album);
 
     return {
       artists,
@@ -26,54 +31,67 @@ export class FavoritesService {
     };
   }
 
-  addTrack(id: string) {
-    this.databaseService.favorites.tracks.add(id);
-    return this.databaseService.track.get(id);
+  async addTrack(trackId: string) {
+    const favoriteTrack = await this.isTrackIdInFavorites(trackId);
+    if (!favoriteTrack) {
+      return this.prismaService.favoriteTrack.create({ data: { trackId } });
+    }
+    return favoriteTrack;
   }
 
-  removeTrack(id: string) {
-    this.databaseService.favorites.tracks.delete(id);
+  async removeTrack(trackId: string) {
+    this.prismaService.favoriteTrack.delete({ where: { trackId } });
   }
 
-  checkTrackIdExists(trackId: string) {
-    return this.databaseService.track.has(trackId);
+  async checkTrackIdExists(id: string) {
+    return this.prismaService.track.findUnique({ where: { id } });
   }
 
-  isTrackIdInFavorites(trackId: string) {
-    return this.databaseService.favorites.tracks.has(trackId);
+  async isTrackIdInFavorites(trackId: string) {
+    return this.prismaService.favoriteTrack.findUnique({
+      where: { trackId },
+    });
   }
 
-  addAlbum(id: string) {
-    this.databaseService.favorites.albums.add(id);
-    return this.databaseService.album.get(id);
+  async addAlbum(albumId: string) {
+    const favoriteAlbum = await this.isAlbumIdInFavorites(albumId);
+    if (!favoriteAlbum) {
+      return this.prismaService.favoriteAlbum.create({ data: { albumId } });
+    }
+    return favoriteAlbum;
   }
 
-  removeAlbum(id: string) {
-    this.databaseService.favorites.albums.delete(id);
+  async removeAlbum(albumId: string) {
+    this.prismaService.favoriteAlbum.delete({ where: { albumId } });
   }
 
-  checkAlbumIdExists(id: string) {
-    return this.databaseService.album.has(id);
+  async checkAlbumIdExists(id: string) {
+    return this.prismaService.album.findUnique({ where: { id } });
   }
 
-  isAlbumIdInFavorites(id: string) {
-    return this.databaseService.favorites.albums.has(id);
+  async isAlbumIdInFavorites(albumId: string) {
+    return this.prismaService.favoriteAlbum.findUnique({ where: { albumId } });
   }
 
-  addArtist(id: string) {
-    this.databaseService.favorites.artists.add(id);
-    return this.databaseService.artist.get(id);
+  async addArtist(artistId: string) {
+    const favoriteArtist = await this.isArtistIdInFavorites(artistId);
+    if (!favoriteArtist) {
+      return this.prismaService.favoriteArtist.create({ data: { artistId } });
+    }
+    return favoriteArtist;
   }
 
-  removeArtist(id: string) {
-    this.databaseService.favorites.artists.delete(id);
+  async removeArtist(artistId: string) {
+    this.prismaService.favoriteArtist.delete({ where: { artistId } });
   }
 
-  checkArtistIdExists(id: string) {
-    return this.databaseService.artist.has(id);
+  async checkArtistIdExists(id: string) {
+    return this.prismaService.artist.findUnique({ where: { id } });
   }
 
-  isArtistIdInFavorites(id: string) {
-    return this.databaseService.favorites.artists.has(id);
+  async isArtistIdInFavorites(artistId: string) {
+    return this.prismaService.favoriteArtist.findUnique({
+      where: { artistId },
+    });
   }
 }

@@ -30,6 +30,9 @@ export class TrackService {
 
   async remove(id: string) {
     await this.findOne(id);
+    await this.prismaService.favoriteTrack.deleteMany({
+      where: { trackId: id },
+    });
     await this.prismaService.track.delete({ where: { id } });
   }
 }

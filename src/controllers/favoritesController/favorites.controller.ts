@@ -23,8 +23,9 @@ export class FavoritesController {
 
   @Post('track/:id')
   @HttpCode(HttpStatus.CREATED)
-  addTrack(@Param('id', ValidateUuidPipe) id: string) {
-    if (!this.favoritesService.checkTrackIdExists(id)) {
+  async addTrack(@Param('id', ValidateUuidPipe) id: string) {
+    const isTrackIdExist = await this.favoritesService.checkTrackIdExists(id);
+    if (!isTrackIdExist) {
       throw new HttpException(
         'Track not found',
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -46,10 +47,11 @@ export class FavoritesController {
 
   @Post('album/:id')
   @HttpCode(HttpStatus.CREATED)
-  addAlbum(@Param('id', ValidateUuidPipe) id: string) {
-    if (!this.favoritesService.checkAlbumIdExists(id)) {
+  async addAlbum(@Param('id', ValidateUuidPipe) id: string) {
+    const isAlbumExist = await this.favoritesService.checkAlbumIdExists(id);
+    if (!isAlbumExist) {
       throw new HttpException(
-        'Album not found in favorites',
+        'Album not found',
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
@@ -59,8 +61,10 @@ export class FavoritesController {
 
   @Delete('album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeAlbum(@Param('id', ValidateUuidPipe) id: string) {
-    if (!this.favoritesService.isAlbumIdInFavorites(id)) {
+  async removeAlbum(@Param('id', ValidateUuidPipe) id: string) {
+    const isAlbumIdInFavorite =
+      await this.favoritesService.isAlbumIdInFavorites(id);
+    if (!isAlbumIdInFavorite) {
       throw new NotFoundException('Album is not favorite');
     }
     return this.favoritesService.removeAlbum(id);
@@ -68,10 +72,11 @@ export class FavoritesController {
 
   @Post('artist/:id')
   @HttpCode(HttpStatus.CREATED)
-  addArtist(@Param('id', ValidateUuidPipe) id: string) {
-    if (!this.favoritesService.checkArtistIdExists(id)) {
+  async addArtist(@Param('id', ValidateUuidPipe) id: string) {
+    const isArtistExist = await this.favoritesService.checkArtistIdExists(id);
+    if (!isArtistExist) {
       throw new HttpException(
-        'Artist not found in favorites',
+        'Artist not found',
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
@@ -81,8 +86,10 @@ export class FavoritesController {
 
   @Delete('artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeArtist(@Param('id', ValidateUuidPipe) id: string) {
-    if (!this.favoritesService.isArtistIdInFavorites(id)) {
+  async removeArtist(@Param('id', ValidateUuidPipe) id: string) {
+    const isArtistIdInFavorite =
+      await this.favoritesService.isArtistIdInFavorites(id);
+    if (!isArtistIdInFavorite) {
       throw new NotFoundException('Artist is not favorite');
     }
     return this.favoritesService.removeArtist(id);

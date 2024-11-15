@@ -5,18 +5,20 @@ import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class AlbumService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prismaService: PrismaService) {}
 
   async findAll() {
-    return this.prisma.album.findMany();
+    return this.prismaService.album.findMany();
   }
 
   async create(createAlbumDto: CreateAlbumDto) {
-    return this.prisma.album.create({ data: createAlbumDto });
+    return this.prismaService.album.create({ data: createAlbumDto });
   }
 
   async findOne(id: string) {
-    const album = await this.prisma.album.findUnique({ where: { id: id } });
+    const album = await this.prismaService.album.findUnique({
+      where: { id: id },
+    });
     if (!album) throw new NotFoundException('Album not found');
     return album;
   }
@@ -25,7 +27,7 @@ export class AlbumService {
     const album = await this.findOne(id);
     const data = { ...album, ...updateArtistDto };
 
-    return this.prisma.album.update({
+    return this.prismaService.album.update({
       where: { id },
       data,
     });
@@ -33,6 +35,10 @@ export class AlbumService {
 
   async remove(id: string) {
     await this.findOne(id);
-    await this.prisma.album.delete({ where: { id: id } });
+
+    await this.prismaService.album.delete({ where: { id } });
+    await this.prismaService.favoriteAlbum.deleteMany({
+      where: { albumId: id },
+    });
   }
 }

@@ -5,18 +5,20 @@ import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class ArtistService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prismaService: PrismaService) {}
 
   async findAll() {
-    return this.prisma.artist.findMany();
+    return this.prismaService.artist.findMany();
   }
 
   async create(createArtistDto: CreateArtistDto) {
-    return this.prisma.artist.create({ data: createArtistDto });
+    return this.prismaService.artist.create({ data: createArtistDto });
   }
 
   async findOne(id: string) {
-    const artist = await this.prisma.artist.findUnique({ where: { id: id } });
+    const artist = await this.prismaService.artist.findUnique({
+      where: { id: id },
+    });
     if (!artist) throw new NotFoundException('Artist not found');
     return artist;
   }
@@ -25,7 +27,7 @@ export class ArtistService {
     const artist = await this.findOne(id);
     const data = { ...artist, ...updateArtistDto };
 
-    return this.prisma.artist.update({
+    return this.prismaService.artist.update({
       where: { id },
       data,
     });
@@ -33,6 +35,9 @@ export class ArtistService {
 
   async remove(id: string) {
     await this.findOne(id);
-    await this.prisma.artist.delete({ where: { id: id } });
+    await this.prismaService.favoriteArtist.deleteMany({
+      where: { artistId: id },
+    });
+    await this.prismaService.artist.delete({ where: { id: id } });
   }
 }
