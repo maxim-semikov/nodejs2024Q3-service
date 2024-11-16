@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: db.Dockerfile
+    container_name: 'db-postgres'
     env_file:
       - .env
     ports:
@@ -12,6 +13,33 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
+    networks:
+      - app_network
+
+  app:
+    build:
+      context: .
+      dockerfile: app.Dockerfile
+    container_name: 'api-app'
+    ports:
+      - '$PORT:$PORT'
+    tty: true
+    stdin_open: true
+    depends_on:
+      - db
+    restart: on-failure
+    networks:
+      - app_network
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app/src
 
 volumes:
   postgres_data:
+
+
+networks:
+  app_network:
+    driver: bridge
+    name: 'app_network'
