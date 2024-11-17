@@ -1,11 +1,12 @@
-FROM node:22 as build
+FROM node:22 AS build
 
 WORKDIR /app
 
+COPY package*.json ./
+
+RUN npm ci
+
 COPY . .
-
-RUN npm install
-
 
 FROM node:22-alpine
 
