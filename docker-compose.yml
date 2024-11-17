@@ -2,14 +2,12 @@ version: '3.8'
 
 services:
   db:
-    build:
-      context: .
-      dockerfile: db.Dockerfile
+    image: 'maximsemikov/nodejs2024q3-service-db'
     container_name: 'db-postgres'
     env_file:
       - .env
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - '${POSTGRES_PORT}:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
@@ -17,9 +15,7 @@ services:
       - app_network
 
   app:
-    build:
-      context: .
-      dockerfile: app.Dockerfile
+    image: 'maximsemikov/nodejs2024q3-service-app'
     container_name: 'api-app'
     ports:
       - '$PORT:$PORT'
