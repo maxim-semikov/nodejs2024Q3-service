@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import * as YAML from 'yamljs';
 import { AppModule } from './app.module';
+import { PrismaExceptionInterceptor } from './interceptors/prisma-exception-interceptor.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +21,8 @@ async function bootstrap() {
 
   const yamlDocument = YAML.load('./doc/api.yaml');
   SwaggerModule.setup('docs', app, yamlDocument);
+
+  app.useGlobalInterceptors(new PrismaExceptionInterceptor());
 
   await app.listen(port);
 }
