@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   db:
-    image: 'maximsemikov/nodejs2024q3-service-db'
+    image: maximsemikov/nodejs2024q3-service-db
     container_name: 'db-postgres'
     env_file:
       - .env
@@ -15,7 +15,7 @@ services:
       - app_network
 
   app:
-    image: 'maximsemikov/nodejs2024q3-service-app'
+    image: maximsemikov/nodejs2024q3-service-app
     container_name: 'api-app'
     ports:
       - '$PORT:$PORT'
