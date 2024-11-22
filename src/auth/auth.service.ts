@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { UsersService } from '../controllers/usersController/users.service';
 
 @Injectable()
@@ -11,7 +12,11 @@ export class AuthService {
 
   async signIn(login: string, password: string): Promise<any> {
     const user = await this.usersService.getUserByLogin(login);
-    if (user?.password !== password) {
+    const isPasswordCorrect = user
+      ? await bcrypt.compare(password, user.password)
+      : false;
+
+    if (!isPasswordCorrect) {
       throw new ForbiddenException();
     }
 

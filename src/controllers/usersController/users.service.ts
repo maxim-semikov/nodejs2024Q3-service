@@ -3,10 +3,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserEntity } from './entities/user.entity';
+import * as process from 'node:process';
 
 @Injectable()
 export class UsersService {
@@ -22,9 +24,11 @@ export class UsersService {
     return user;
   }
 
-  async create(createUserDto: CreateUserDto) {
+  async create({ login, password }: CreateUserDto) {
+    const salt = process.env.CRYPT_SALT || 10;
+    const hashedPassword = await bcrypt.hash(password, salt);
     const user = await this.prisma.user.create({
-      data: createUserDto,
+      data: { login, password: hashedPassword },
     });
     return new UserEntity(user);
   }
