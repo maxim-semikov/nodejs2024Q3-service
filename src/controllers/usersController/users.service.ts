@@ -51,4 +51,8 @@ export class UsersService {
     await this.getUserById(id);
     await this.prisma.user.delete({ where: { id } });
   }
+
+  async getUserByLogin(login: string) {
+    return this.prisma.user.findUnique({ where: { login } });
+  }
 }
