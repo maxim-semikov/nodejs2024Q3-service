@@ -3,16 +3,19 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserEntity } from './entities/user.entity';
-import * as process from 'node:process';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private configService: ConfigService,
+  ) {}
 
   async findAll() {
     return this.prisma.user.findMany();
@@ -25,8 +28,7 @@ export class UsersService {
   }
 
   async create({ login, password }: CreateUserDto) {
-    const salt = process.env.CRYPT_SALT || 10;
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await this.getHashedPassword(password);
     const user = await this.prisma.user.create({
       data: { login, password: hashedPassword },
     });
@@ -36,14 +38,22 @@ export class UsersService {
   async updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
     const user = await this.getUserById(id);
 
-    if (user.password !== updatePasswordDto.oldPassword) {
+    const isPasswordCorrect = user
+      ? await bcrypt.compare(updatePasswordDto.oldPassword, user.password)
+      : false;
+
+    if (!isPasswordCorrect) {
       throw new ForbiddenException('Old password is incorrect');
     }
+
+    const hashedPassword = await this.getHashedPassword(
+      updatePasswordDto.newPassword,
+    );
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
       data: {
-        password: updatePasswordDto.newPassword,
+        password: hashedPassword,
         version: { increment: 1 },
       },
     });
@@ -58,5 +68,10 @@ export class UsersService {
 
   async getUserByLogin(login: string) {
     return this.prisma.user.findUnique({ where: { login } });
+  }
+
+  private async getHashedPassword(password: string) {
+    const salt = parseInt(this.configService.get('CRYPT_SALT')) || 10;
+    return bcrypt.hash(password, salt);
   }
 }

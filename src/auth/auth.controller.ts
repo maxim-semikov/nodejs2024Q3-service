@@ -7,7 +7,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/auth.dto';
+import { AuthDto } from './dto/authDto';
 import { ExcludeUserPasswordInterceptor } from '../interceptors/exclude-user-password.interceptor';
 import { Public } from './auth.decorator';
 
@@ -19,7 +19,13 @@ export class AuthController {
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() loginDto: LoginDto) {
-    return this.authService.signIn(loginDto.login, loginDto.password);
+  async login(@Body() authDto: AuthDto) {
+    return this.authService.signIn(authDto.login, authDto.password);
+  }
+
+  @Public()
+  @Post('signup')
+  async signup(@Body() authDto: AuthDto) {
+    return this.authService.signUp(authDto);
   }
 }
