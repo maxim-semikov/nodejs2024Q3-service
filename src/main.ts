@@ -17,7 +17,7 @@ async function bootstrap() {
     }),
   );
   const configService = app.get(ConfigService);
-  const port = configService.get('PORT') || 4000;
+  const port = configService.get('PORT', 4000);
 
   const yamlDocument = YAML.load('./doc/api.yaml');
   SwaggerModule.setup('docs', app, yamlDocument);

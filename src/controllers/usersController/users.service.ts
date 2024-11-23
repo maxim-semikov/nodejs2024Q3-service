@@ -71,7 +71,7 @@ export class UsersService {
   }
 
   private async getHashedPassword(password: string) {
-    const salt = parseInt(this.configService.get('CRYPT_SALT')) || 10;
+    const salt = parseInt(this.configService.get('CRYPT_SALT', '10'));
     return bcrypt.hash(password, salt);
   }
 }
