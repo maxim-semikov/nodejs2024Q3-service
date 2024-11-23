@@ -4,6 +4,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  UnauthorizedException,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -27,5 +28,14 @@ export class AuthController {
   @Post('signup')
   async signup(@Body() authDto: AuthDto) {
     return this.authService.signUp(authDto);
+  }
+
+  @Public()
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refresh(@Body('refreshToken') token: string) {
+    console.log('refreshToken ', token);
+    if (!token) throw new UnauthorizedException();
+    return this.authService.refresh(token);
   }
 }
