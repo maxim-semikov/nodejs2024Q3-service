@@ -71,14 +71,18 @@ export class LoggingService implements LoggerService {
     filePath: string,
     trace?: string,
   ) {
-    const logMessage = `[${type}] ${new Date().toISOString()} => ${message}${
+    const date = new Date().toISOString();
+    const logMessage = `[${type}] ${date} => ${message}${
       trace ? ` - ${trace}` : ''
     }\n`;
 
     this.rotateFile(filePath);
     fs.appendFileSync(filePath, logMessage, 'utf8');
 
-    console.log(logMessage);
+    const formatedMessage = `\x1b[33m[${type}]\x1b[0m \x1b[35m${date}\x1b[0m \x1b[33m=>\x1b[0m ${message}${
+      trace ? ` - ${trace}` : ''
+    }\n`;
+    console.log(formatedMessage);
   }
 
   private shouldLog(level: number) {
