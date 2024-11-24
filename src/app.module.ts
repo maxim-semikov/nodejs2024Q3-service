@@ -9,6 +9,7 @@ import { TrackModule } from './controllers/trackController/track.module';
 import { FavoritesModule } from './controllers/favoritesController/favorites.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
+import { LoggingModule } from './logging/logging.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AuthModule } from './auth/auth.module';
     TrackModule,
     FavoritesModule,
     PrismaModule,
+    LoggingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
