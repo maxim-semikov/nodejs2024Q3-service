@@ -41,9 +41,16 @@ For more information about OpenAPI/Swagger please visit https://swagger.io/.
 After application running open new terminal and enter:
 
 ```
-npm run test
+test:auth
+
 ```
-To run all tests without authorization
+
+To run all tests with authorization. Also enter
+
+```aiignore
+test:refresh
+```
+to run tests for check Refresh token 
 
 ### Auto-fix and format
 
@@ -53,10 +60,4 @@ npm run lint
 
 ```
 npm run format
-```
-### Scan Docker containers
-You can also run a report on scanning Docker images for vulnerabilities using the docker scout tool.
-
-```aiignore
-npm docker:scan
 ```

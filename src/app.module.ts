@@ -8,18 +8,22 @@ import { AlbumModule } from './controllers/albumController/album.module';
 import { TrackModule } from './controllers/trackController/track.module';
 import { FavoritesModule } from './controllers/favoritesController/favorites.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './auth/auth.module';
+import { LoggingModule } from './logging/logging.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    AuthModule,
     UsersModule,
     ArtistModule,
     AlbumModule,
     TrackModule,
     FavoritesModule,
     PrismaModule,
+    LoggingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
